@@ -1,111 +1,133 @@
 
 \documentclass[
-  xcolor={svgnames},
+  xcolor={svgnames,dvipsnames},
   hyperref={pagebackref,bookmarks},
   aspectratio=169,
   11pt
 ]{beamer}
 \mode<presentation>
 
-% UTDallas-inspired Beamer styling, adapted from the public template structure
-\usetheme{Madrid}
-\useinnertheme{circles}
-\usefonttheme{default}
-\setbeamertemplate{navigation symbols}{}
-
+% Modern typography & font selection
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{lmodern}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{microtype}
+\usepackage[varqu,varl]{inconsolata} % Crisp, modern code font
 \usepackage{amsmath,amssymb,mathtools}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,calc,fit,shapes.geometric}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,shapes.geometric,shadows}
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{listings}
+\usepackage{graphicx}
 
-% UT Dallas palette: orange #E87500, green #053D2C
-\definecolor{UTDOrange}{HTML}{E87500}
-\definecolor{UTDGreen}{HTML}{053D2C}
-\definecolor{UTDSilverleaf}{HTML}{3DA485}
-\definecolor{UTDLightOrange}{RGB}{255,239,219}
-\definecolor{UTDLightGreen}{RGB}{224,242,235}
-\definecolor{UTDLightGray}{RGB}{245,246,244}
-\definecolor{UTDDark}{RGB}{30,34,32}
+% Modernized Executive UT Dallas Color Palette
+\definecolor{UTDGreen}{HTML}{053D2C}       % Primary Deep Forest Emerald
+\definecolor{UTDOrange}{HTML}{E87500}      % Vibrant UT Dallas Amber
+\definecolor{UTDSilverleaf}{HTML}{2A9D8F}  % Cyan/Teal accent
+\definecolor{UTDDark}{HTML}{1E293B}        % Slate Dark text
+\definecolor{UTDLightBg}{HTML}{F8FAFC}    % Clean canvas background
+\definecolor{UTDCardBg}{HTML}{F1F5F9}     % Soft slate card
+\definecolor{UTDGreenTint}{HTML}{EFF6FF}   % Soft Blue/Green tint
+\definecolor{UTDOrangeTint}{HTML}{FFF7ED}  % Soft Amber tint
+\definecolor{UTDGrayTint}{HTML}{F8FAFC}    % Soft Gray tint
 
-% Backward-compatible color names used by the existing TikZ diagrams
+% Backward-compatible color aliases
 \colorlet{deepblue}{UTDGreen}
-\colorlet{softblue}{UTDLightGreen}
-\colorlet{softgreen}{UTDLightGreen}
-\colorlet{softorange}{UTDLightOrange}
-\colorlet{softred}{UTDOrange!13}
-\colorlet{softgray}{UTDLightGray}
+\colorlet{softblue}{UTDGreenTint}
+\colorlet{softgreen}{UTDGreenTint}
+\colorlet{softorange}{UTDOrangeTint}
+\colorlet{softred}{UTDOrange!12}
+\colorlet{softgray}{UTDCardBg}
 
+% General Beamer Theme Overrides
+\usetheme{default}
+\useinnertheme{circles}
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=UTDDark}
 \setbeamercolor{structure}{fg=UTDOrange}
 \setbeamercolor{title}{fg=UTDGreen}
 \setbeamercolor{frametitle}{fg=UTDGreen}
-\setbeamercolor{normal text}{fg=UTDDark,bg=white}
-\setbeamercolor{block title}{fg=white,bg=UTDGreen}
-\setbeamercolor{block body}{fg=UTDDark,bg=UTDLightGreen}
-\setbeamercolor{alerted text}{fg=UTDOrange}
+\setbeamercolor{section in toc}{fg=UTDGreen}
+\setbeamercolor{subsection in toc}{fg=UTDDark}
 
-% Template-style top bar: left section + right current slide title
-\providecommand{\insertframetitle}{}
-\setbeamertemplate{frametitle}{}
-\setbeamerfont{headline}{size=\scriptsize}
-\setbeamercolor{headlinebar}{fg=white,bg=UTDGreen}
-\setbeamercolor{headlineaccent}{fg=UTDOrange,bg=UTDOrange}
-\setbeamertemplate{headline}{%
-  \leavevmode%
-  \begin{beamercolorbox}[wd=\paperwidth,ht=1.45ex,dp=0.55ex,leftskip=1.0em,rightskip=1.0em]{headlinebar}%
-    {\usebeamerfont{headline}\bfseries\insertsectionhead}\hfill{\usebeamerfont{headline}\color{white!85}\insertframetitle}
+% Custom Styled Card Blocks
+\setbeamercolor{block title}{fg=white,bg=UTDGreen}
+\setbeamercolor{block body}{fg=UTDDark,bg=UTDGreenTint}
+\setbeamercolor{block title alerted}{fg=white,bg=UTDOrange}
+\setbeamercolor{block body alerted}{fg=UTDDark,bg=UTDOrangeTint}
+\setbeamercolor{block title example}{fg=white,bg=UTDSilverleaf}
+\setbeamercolor{block body example}{fg=UTDDark,bg=UTDCardBg}
+
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+% Modern Minimalist Header (Frametitle + Category Tag)
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip%
+  \vspace*{0.3em}%
+  \begin{beamercolorbox}[wd=\paperwidth]{frametitle}%
+    \hspace*{1.2em}%
+    \begin{minipage}{\dimexpr\paperwidth-2.4em\relax}%
+      \ifx\insertsectionhead\empty\else
+        {\usebeamerfont{headline}\fontseries{b}\selectfont\color{UTDOrange}\uppercase{\insertsectionhead}}\\[0.05em]%
+      \fi
+      {\usebeamerfont{frametitle}\fontseries{bx}\selectfont\color{UTDGreen}\insertframetitle}%
+      \ifx\insertframesubtitle\empty\else
+        \\[0.05em]{\usebeamerfont{framesubtitle}\color{UTDDark!70}\insertframesubtitle}%
+      \fi
+    \end{minipage}%
   \end{beamercolorbox}%
-  \begin{beamercolorbox}[wd=\paperwidth,ht=0.22ex,dp=0ex]{headlineaccent}%
+  \vspace*{0.2em}%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0.8pt,dp=0pt]{block title alerted}%
   \end{beamercolorbox}%
 }
 
-% Template-style footer
-\setbeamercolor{footlinebar}{fg=white,bg=UTDGreen}
+% Modern Footer with Slide Counter and Accent Line
 \setbeamertemplate{footline}{%
   \leavevmode%
-  \hbox{%
-    \begin{beamercolorbox}[wd=.72\paperwidth,ht=2.35ex,dp=0.9ex,leftskip=1.0em]{footlinebar}%
-      \scriptsize\inserttitle
-    \end{beamercolorbox}%
-    \begin{beamercolorbox}[wd=.18\paperwidth,ht=2.35ex,dp=0.9ex,center]{footlinebar}%
-      \scriptsize\insertshortauthor
-    \end{beamercolorbox}%
-    \begin{beamercolorbox}[wd=.10\paperwidth,ht=2.35ex,dp=0.9ex,center]{footlinebar}%
-      \scriptsize\insertframenumber/\inserttotalframenumber
-    \end{beamercolorbox}%
-  }%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.4ex,dp=1.0ex]{footline}%
+    \hspace*{1.2em}%
+    {\scriptsize\color{UTDDark!60}\insertshorttitle}%
+    \hfill%
+    {\scriptsize\color{UTDDark!60}\insertshortauthor}%
+    \hfill%
+    {\scriptsize\fontseries{b}\selectfont\color{UTDGreen}\insertframenumber\ \!\big/\ \!\inserttotalframenumber}%
+    \hspace*{1.2em}%
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=1.2pt,dp=0pt]{block title alerted}%
+  \end{beamercolorbox}%
 }
 
+% Code Listing Styling
 \lstset{
   language=Python,
-  basicstyle=\ttfamily\small,
+  basicstyle=\ttfamily\scriptsize,
   keywordstyle=\color{UTDGreen}\bfseries,
-  commentstyle=\color{UTDSilverleaf!75!black},
-  stringstyle=\color{UTDOrange!85!black},
+  commentstyle=\color{UTDSilverleaf!85!black}\itshape,
+  stringstyle=\color{UTDOrange!90!black},
   showstringspaces=false,
   columns=fullflexible,
   keepspaces=true,
-  backgroundcolor=\color{UTDLightGray},
+  backgroundcolor=\color{UTDCardBg},
   frame=single,
-  rulecolor=\color{UTDGreen!55},
+  rulecolor=\color{UTDGreen!30},
   frameround=tttt,
   framesep=6pt,
-  aboveskip=0.4em,
-  belowskip=0.2em
+  aboveskip=0.5em,
+  belowskip=0.3em
 }
 
+% TikZ Modern Box & Arrow Definitions
 \tikzset{
-  box/.style={draw=UTDGreen, thick, rounded corners, align=center, fill=UTDLightGreen, minimum height=0.8cm, inner sep=5pt},
-  greenbox/.style={draw=UTDGreen, thick, rounded corners, align=center, fill=UTDLightGreen, minimum height=0.8cm, inner sep=5pt},
-  orangebox/.style={draw=UTDOrange, thick, rounded corners, align=center, fill=UTDLightOrange, minimum height=0.8cm, inner sep=5pt},
-  redbox/.style={draw=UTDOrange!85!black, thick, rounded corners, align=center, fill=UTDOrange!12, minimum height=0.8cm, inner sep=5pt},
-  graybox/.style={draw=black!45, thick, rounded corners, align=center, fill=UTDLightGray, minimum height=0.8cm, inner sep=5pt},
-  arr/.style={-{Latex[length=3mm]}, thick, draw=UTDGreen},
-  darr/.style={-{Latex[length=3mm]}, thick, dashed, draw=UTDOrange!85!black}
+  box/.style={draw=UTDGreen, thick, rounded corners=5pt, align=center, fill=UTDGreenTint, minimum height=0.8cm, inner sep=6pt},
+  greenbox/.style={draw=UTDGreen, thick, rounded corners=5pt, align=center, fill=UTDGreenTint, minimum height=0.8cm, inner sep=6pt},
+  orangebox/.style={draw=UTDOrange, thick, rounded corners=5pt, align=center, fill=UTDOrangeTint, minimum height=0.8cm, inner sep=6pt},
+  redbox/.style={draw=UTDOrange!85!black, thick, rounded corners=5pt, align=center, fill=UTDOrange!12, minimum height=0.8cm, inner sep=6pt},
+  graybox/.style={draw=UTDDark!40, thick, rounded corners=5pt, align=center, fill=UTDCardBg, minimum height=0.8cm, inner sep=6pt},
+  arr/.style={-{Stealth[length=2.5mm,width=2mm]}, thick, draw=UTDGreen},
+  darr/.style={-{Stealth[length=2.5mm,width=2mm]}, thick, dashed, draw=UTDOrange}
 }
 
 \title[How microGPT Works]{How microGPT Works}
@@ -115,17 +137,33 @@
 
 \begin{document}
 
+% Sleek Modern Title Frame
 \begin{frame}[plain]
 \begin{tikzpicture}[remember picture,overlay]
-  \fill[white] (current page.south west) rectangle (current page.north east);
-  \fill[UTDOrange] (current page.south west) rectangle ([xshift=0.15\paperwidth]current page.north west);
-  \fill[UTDGreen] ([xshift=0.15\paperwidth,yshift=-0.055\paperheight]current page.north west) rectangle (current page.north east);
-  \fill[UTDGreen] ([xshift=0.15\paperwidth]current page.south west) rectangle ([xshift=0.18\paperwidth]current page.north west);
-  \node[rotate=90, text=white, font=\bfseries\Large] at ([xshift=0.075\paperwidth,yshift=0.50\paperheight]current page.south west) {microGPT};
-  \node[anchor=west, text=white, font=\bfseries\small] at ([xshift=0.17\paperwidth,yshift=-0.030\paperheight]current page.north west) {Understanding the inner workings of GPT models.};
-  \node[anchor=north east, text=UTDGreen, align=right, font=\bfseries\Huge] at ([xshift=-0.07\paperwidth,yshift=-0.23\paperheight]current page.north east) {How microGPT Works};
-  \node[anchor=north east, text=UTDDark, align=right, font=\Large] at ([xshift=-0.07\paperwidth,yshift=-0.36\paperheight]current page.north east) {Number flow, layers, attention,\\and training motivation};
-  \node[anchor=south east, text=UTDGreen, align=right, font=\large] at ([xshift=-0.07\paperwidth,yshift=0.10\paperheight]current page.south east) {J Zhao};
+  % Full canvas background
+  \fill[UTDLightBg] (current page.south west) rectangle (current page.north east);
+  
+  % Left side geometric banner accent
+  \fill[UTDGreen] (current page.south west) rectangle ([xshift=0.32\paperwidth]current page.north west);
+  \fill[UTDOrange] ([xshift=0.32\paperwidth]current page.south west) rectangle ([xshift=0.332\paperwidth]current page.north west);
+
+  % Title banner text on left
+  \node[rotate=90, text=white, font=\bfseries\Huge] at ([xshift=0.14\paperwidth,yshift=0.50\paperheight]current page.south west) {microGPT};
+  \node[rotate=90, text=UTDOrangeTint, font=\small\sffamily] at ([xshift=0.24\paperwidth,yshift=0.50\paperheight]current page.south west) {Understanding the inner workings of GPT models.};
+
+  % Main Title & Metadata on right canvas
+  \node[anchor=west, text=UTDGreen, align=left, font=\bfseries\fontsize{26}{30}\selectfont, text width=0.60\paperwidth] at ([xshift=0.37\paperwidth,yshift=0.22\paperheight]current page.north west) {How microGPT Works};
+  
+  \node[anchor=west, text=UTDOrange, font=\bfseries\large] at ([xshift=0.37\paperwidth,yshift=0.06\paperheight]current page.north west) {Number flow, layers, attention, \& training motivation};
+  
+  \draw[UTDGreen!25, line width=1.5pt] ([xshift=0.37\paperwidth,yshift=-0.02\paperheight]current page.north west) -- ([xshift=0.92\paperwidth,yshift=-0.02\paperheight]current page.north west);
+
+  % Author / Badge Info
+  \node[anchor=west, text=UTDDark, font=\large] at ([xshift=0.37\paperwidth,yshift=-0.12\paperheight]current page.north west) {\textbf{Author:} J Zhao};
+  \node[anchor=west, text=UTDDark!75, font=\medium] at ([xshift=0.37\paperwidth,yshift=-0.19\paperheight]current page.north west) {\textbf{Topic:} Transformer Architecture Study Notes};
+  
+  % Date badge pill
+  \node[anchor=west, draw=UTDGreen!40, fill=UTDGreenTint, rounded corners=4pt, inner sep=5pt, text=UTDGreen, font=\small\bfseries] at ([xshift=0.37\paperwidth,yshift=-0.28\paperheight]current page.north west) {\today};
 \end{tikzpicture}
 \end{frame}
 
@@ -143,6 +181,15 @@
 
 % ---------------- Chapter 1 ----------------
 \section{What the toy GPT is learning}
+
+\begin{frame}{MicroGPT architecture overview}
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{microgpt_decoder_architecture_diagram.png}
+
+\vspace{0.15cm}
+{\scriptsize Decoder-only Transformer: embeddings $\to$ causal self-attention blocks $\to$ output logits $\to$ next-token probabilities.}
+\end{frame}
+
 \begin{frame}{Chapter 1 - The model is a name generator}
 The code trains a character-level autoregressive model.
 
