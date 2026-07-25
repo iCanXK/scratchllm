@@ -1,0 +1,198 @@
+[
+  {
+    "number": 1,
+    "section": "Foundations / Vision",
+    "title": "CS231n: Convolutional Neural Networks for Visual Recognition",
+    "authors": "Stanford course notes",
+    "url": "https://cs231n.github.io/"
+  },
+  {
+    "number": 2,
+    "section": "Foundations / Vision",
+    "title": "ImageNet Classification with Deep Convolutional Neural Networks",
+    "authors": "Alex Krizhevsky, Ilya Sutskever, Geoffrey Hinton (2012)",
+    "url": "https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf"
+  },
+  {
+    "number": 3,
+    "section": "Foundations / Vision",
+    "title": "Deep Residual Learning for Image Recognition",
+    "authors": "Kaiming He et al. (2015)",
+    "url": "https://arxiv.org/pdf/1512.03385"
+  },
+  {
+    "number": 4,
+    "section": "Foundations / Vision",
+    "title": "Multi-Scale Context Aggregation by Dilated Convolutions",
+    "authors": "Fisher Yu, Vladlen Koltun (2015)",
+    "url": "https://arxiv.org/pdf/1511.07122"
+  },
+  {
+    "number": 5,
+    "section": "Foundations / Vision",
+    "title": "Identity Mappings in Deep Residual Networks",
+    "authors": "Kaiming He et al. (2016)",
+    "url": "https://arxiv.org/pdf/1603.05027"
+  },
+  {
+    "number": 6,
+    "section": "Sequence Models",
+    "title": "The Unreasonable Effectiveness of Recurrent Neural Networks",
+    "authors": "Andrej Karpathy (2015)",
+    "url": "https://karpathy.github.io/2015/05/21/rnn-effectiveness/"
+  },
+  {
+    "number": 7,
+    "section": "Sequence Models",
+    "title": "Understanding LSTM Networks",
+    "authors": "Christopher Olah (2015)",
+    "url": "https://colah.github.io/posts/2015-08-Understanding-LSTMs/"
+  },
+  {
+    "number": 8,
+    "section": "Sequence Models",
+    "title": "Recurrent Neural Network Regularization",
+    "authors": "Wojciech Zaremba, Ilya Sutskever, Oriol Vinyals (2014)",
+    "url": "https://arxiv.org/pdf/1409.2329"
+  },
+  {
+    "number": 9,
+    "section": "Sequence Models",
+    "title": "Deep Speech 2: End-to-End Speech Recognition in English and Mandarin",
+    "authors": "Dario Amodei et al. (2015)",
+    "url": "https://arxiv.org/pdf/1512.02595"
+  },
+  {
+    "number": 10,
+    "section": "Sequence-to-Sequence and Attention",
+    "title": "Sequence to Sequence Learning with Neural Networks",
+    "authors": "Ilya Sutskever, Oriol Vinyals, Quoc Le (2014)",
+    "url": "https://arxiv.org/pdf/1409.3215"
+  },
+  {
+    "number": 11,
+    "section": "Sequence-to-Sequence and Attention",
+    "title": "Order Matters: Sequence to Sequence for Sets",
+    "authors": "Oriol Vinyals, Samy Bengio, Manjunath Kudlur (2015)",
+    "url": "https://arxiv.org/pdf/1511.06391"
+  },
+  {
+    "number": 12,
+    "section": "Sequence-to-Sequence and Attention",
+    "title": "Neural Machine Translation by Jointly Learning to Align and Translate",
+    "authors": "Dzmitry Bahdanau, Kyunghyun Cho, Yoshua Bengio (2014)",
+    "url": "https://arxiv.org/pdf/1409.0473"
+  },
+  {
+    "number": 13,
+    "section": "Sequence-to-Sequence and Attention",
+    "title": "Pointer Networks",
+    "authors": "Oriol Vinyals, Meire Fortunato, Navdeep Jaitly (2015)",
+    "url": "https://arxiv.org/pdf/1506.03134"
+  },
+  {
+    "number": 14,
+    "section": "Sequence-to-Sequence and Attention",
+    "title": "Attention Is All You Need",
+    "authors": "Ashish Vaswani et al. (2017)",
+    "url": "https://arxiv.org/pdf/1706.03762"
+  },
+  {
+    "number": 15,
+    "section": "Sequence-to-Sequence and Attention",
+    "title": "The Annotated Transformer",
+    "authors": "Harvard NLP",
+    "url": "https://nlp.seas.harvard.edu/annotated-transformer/"
+  },
+  {
+    "number": 16,
+    "section": "Memory, Reasoning, and Graphs",
+    "title": "Neural Turing Machines",
+    "authors": "Alex Graves, Greg Wayne, Ivo Danihelka (2014)",
+    "url": "https://arxiv.org/pdf/1410.5401"
+  },
+  {
+    "number": 17,
+    "section": "Memory, Reasoning, and Graphs",
+    "title": "A Simple Neural Network Module for Relational Reasoning",
+    "authors": "Adam Santoro et al. (2017)",
+    "url": "https://arxiv.org/pdf/1706.01427"
+  },
+  {
+    "number": 18,
+    "section": "Memory, Reasoning, and Graphs",
+    "title": "Relational Recurrent Neural Networks",
+    "authors": "Adam Santoro et al. (2018)",
+    "url": "https://arxiv.org/pdf/1806.01822"
+  },
+  {
+    "number": 19,
+    "section": "Memory, Reasoning, and Graphs",
+    "title": "Neural Message Passing for Quantum Chemistry",
+    "authors": "Justin Gilmer et al. (2017)",
+    "url": "https://arxiv.org/pdf/1704.01212"
+  },
+  {
+    "number": 20,
+    "section": "Scaling and Systems",
+    "title": "Scaling Laws for Neural Language Models",
+    "authors": "Jared Kaplan et al. (2020)",
+    "url": "https://arxiv.org/pdf/2001.08361"
+  },
+  {
+    "number": 21,
+    "section": "Scaling and Systems",
+    "title": "GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism",
+    "authors": "Yanping Huang et al. (2018)",
+    "url": "https://arxiv.org/pdf/1811.06965"
+  },
+  {
+    "number": 22,
+    "section": "Information Theory and Compression",
+    "title": "Keeping Neural Networks Simple by Minimizing the Description Length of the Weights",
+    "authors": "Geoffrey Hinton, Drew van Camp (1993)",
+    "url": "https://www.cs.toronto.edu/~hinton/absps/colt93.pdf"
+  },
+  {
+    "number": 23,
+    "section": "Information Theory and Compression",
+    "title": "A Tutorial Introduction to the Minimum Description Length Principle",
+    "authors": "Peter Grünwald (2004)",
+    "url": "https://arxiv.org/pdf/math/0406077"
+  },
+  {
+    "number": 24,
+    "section": "Information Theory and Compression",
+    "title": "Kolmogorov Complexity",
+    "authors": "Chapter/topic commonly read via information-theory texts",
+    "url": "https://www.scholarpedia.org/article/Algorithmic_information_theory"
+  },
+  {
+    "number": 25,
+    "section": "Complexity and Intelligence",
+    "title": "The First Law of Complexodynamics",
+    "authors": "Scott Aaronson (essay/lecture)",
+    "url": "https://www.scottaaronson.com/papers/complex.pdf"
+  },
+  {
+    "number": 26,
+    "section": "Complexity and Intelligence",
+    "title": "Quantifying the Rise and Fall of Complexity in Closed Systems: The Coffee Automaton",
+    "authors": "Scott Aaronson, Sean Carroll, Lauren Ouellette (2014)",
+    "url": "https://arxiv.org/pdf/1405.6903"
+  },
+  {
+    "number": 27,
+    "section": "Complexity and Intelligence",
+    "title": "Variational Lossy Autoencoder",
+    "authors": "Xi Chen et al. (2016)",
+    "url": "https://arxiv.org/pdf/1611.02731"
+  },
+  {
+    "number": 28,
+    "section": "Complexity and Intelligence",
+    "title": "Machine Super Intelligence",
+    "authors": "Shane Legg (PhD thesis, 2008)",
+    "url": "https://www.vetta.org/documents/Machine_Super_Intelligence.pdf"
+  }
+]

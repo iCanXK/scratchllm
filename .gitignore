@@ -1,0 +1,32 @@
+# LaTeX build and auxiliary files
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.snm
+*.synctex*
+*.toc
+*.vrb
+*.bbl
+*.blg
+*.idx
+*.ind
+*.lof
+*.lot
+*.ilg
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.env
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
