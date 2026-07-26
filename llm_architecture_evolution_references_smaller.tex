@@ -1,4 +1,4 @@
-\documentclass[11pt]{beamer}
+\documentclass[10pt,aspectratio=169]{beamer}
 \usetheme{Madrid}
 \usecolortheme{seagull}
 \usefonttheme{default}
@@ -27,6 +27,8 @@
 \setbeamercolor{frametitle}{fg=myblue}
 \setbeamercolor{block title}{fg=white,bg=myblue}
 \setbeamercolor{block body}{bg=mygray}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
 
 \newcommand{\vect}[1]{\boldsymbol{#1}}
 
@@ -73,7 +75,8 @@ The paper \emph{Attention Is All You Need} introduced the \textbf{Transformer}~\
 
 \begin{frame}{Initial Transformer Architecture}
 \centering
-\begin{tikzpicture}[node distance=0.35cm and 1.1cm, scale=0.88, every node/.style={transform shape}]
+\resizebox{!}{0.68\textheight}{%
+\begin{tikzpicture}[node distance=0.35cm and 1.1cm, every node/.style={transform shape}]
   % Encoder stack
   \node[emb] (inemb) {Input\\Embedding};
   \node[smallbox, above=0.15cm of inemb] (inplus) {$+$ pos};
@@ -118,7 +121,8 @@ The paper \emph{Attention Is All You Need} introduced the \textbf{Transformer}~\
   \node[below=0.35cm of inemb] {Inputs};
   \node[below=0.35cm of outemb] {Outputs shifted right};
   \node[above=0.2cm of softmax] {Next-token probabilities};
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \end{frame}
 
 \section{microGPT}
@@ -194,7 +198,8 @@ Context & 512 \\
 
 \begin{frame}{GPT-1 Architecture}
 \centering
-\begin{tikzpicture}[node distance=0.35cm, scale=0.92, every node/.style={transform shape}]
+\resizebox{!}{0.70\textheight}{%
+\begin{tikzpicture}[node distance=0.35cm, every node/.style={transform shape}]
   \node[emb] (inp) {Input token IDs};
   \node[emb, above=of inp, minimum width=4.2cm] (embed) {Token embedding $+$ learned position embedding};
   \node[attn, above=0.5cm of embed, minimum width=4.0cm] (block) {Transformer block\\masked self-attention\\$+$ feed-forward};
@@ -210,7 +215,8 @@ Context & 512 \\
   \textbf{Key architectural change from the initial Transformer}\par
   \vspace{0.2em}
   Remove the encoder and cross-attention; keep only a stack of \textbf{causal decoder blocks}.};
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \end{frame}
 
 \section{GPT-2}
@@ -229,7 +235,8 @@ GPT-2 kept the same basic decoder-only architecture as GPT-1, but scaled model s
 
 \begin{frame}{GPT-2 as an Enlarged GPT-1}
 \centering
-\begin{tikzpicture}[node distance=0.35cm, scale=0.94, every node/.style={transform shape}]
+\resizebox{!}{0.70\textheight}{%
+\begin{tikzpicture}[node distance=0.35cm, every node/.style={transform shape}]
   \node[emb] (inp) {BPE token IDs};
   \node[emb, above=of inp, minimum width=4.3cm] (embed) {Token embedding $+$ learned position embedding};
   \node[attn, above=0.55cm of embed, minimum width=4.1cm, minimum height=1.0cm] (stack) {Decoder-only Transformer stack\\same pattern as GPT-1, but much larger};
@@ -242,7 +249,8 @@ GPT-2 kept the same basic decoder-only architecture as GPT-1, but scaled model s
   \textbf{GPT-2 small}\par 12 layers, 12 heads, 768 hidden};
   \node[info, right=1.0cm of stack, text width=4.2cm] {
   \textbf{GPT-2 XL}\par 48 layers, 25 heads, 1600 hidden\par context length 1024\par about 1.5B parameters};
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \end{frame}
 
 \section{GPT-3}
@@ -261,7 +269,8 @@ GPT-3 again retained the decoder-only Transformer pattern, but scaled it drastic
 
 \begin{frame}{GPT-3 Architecture: Same Skeleton, Much Larger Scale}
 \centering
-\begin{tikzpicture}[node distance=0.32cm, scale=0.92, every node/.style={transform shape}]
+\resizebox{!}{0.70\textheight}{%
+\begin{tikzpicture}[node distance=0.32cm, every node/.style={transform shape}]
   \node[emb] (inp) {Prompt tokens};
   \node[emb, above=of inp, minimum width=4.5cm] (embed) {Token embedding $+$ position embedding};
   \node[attn, above=0.5cm of embed, minimum width=4.3cm, minimum height=1.0cm] (stack) {Decoder-only Transformer stack\\deep causal self-attention network};
@@ -281,47 +290,50 @@ GPT-3 again retained the decoder-only Transformer pattern, but scaled it drastic
   \node[info, left=1.1cm of stack, text width=4.1cm] {
   \textbf{Interpretation}\par
   Architecturally close to GPT-2, but large enough for few-shot and in-context learning to become prominent behaviors.};
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \end{frame}
 
 \section{Evolution Summary}
 
+
 \begin{frame}{Architecture Evolution at a Glance}
+\scriptsize
 \centering
-\small
-\begin{tabular}{>{\raggedright\arraybackslash}p{2.15cm} >{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}p{2.45cm}}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{p{1.9cm} p{2.35cm} p{2.55cm} p{2.35cm} p{2.75cm}}
 \toprule
-Model & Core architecture & Main objective & Characteristic scale & Main conceptual shift \\
+\textbf{Model} & \textbf{Core architecture} & \textbf{Objective} & \textbf{Scale} & \textbf{Shift} \\
 \midrule
-Initial Transformer~\cite{vaswani2017attention} & Encoder--decoder & Seq2seq prediction & 6 encoder + 6 decoder layers in the paper & Attention replaces recurrence \\
-\addlinespace[0.2em]
-microGPT & Tiny decoder-only GPT & Character-level next-token prediction & 1 layer, 16 hidden, 4 heads & Educational minimal implementation \\
-\addlinespace[0.2em]
-GPT-1~\cite{radford2018gpt} & Decoder-only Transformer & Generative pretraining $+$ fine-tuning & 12 layers, 768 hidden & Transfer via generative pretraining \\
-\addlinespace[0.2em]
-GPT-2~\cite{radford2019gpt2} & Larger decoder-only Transformer & Large-scale next-token prediction & up to 1.5B params & Zero-shot behavior emerges \\
-\addlinespace[0.2em]
-GPT-3~\cite{brown2020gpt3} & Much larger decoder-only Transformer & Massive next-token prediction & 175B params & Few-shot / in-context learning \\
+Initial Transformer & Encoder--decoder & Sequence-to-sequence & 6 encoder + 6 decoder layers & Attention replaces recurrence \\
+microGPT & Tiny decoder-only GPT & Character-level next-token prediction & 1 layer, $d=16$, 4 heads & Minimal educational implementation \\
+GPT-1 & Decoder-only Transformer & Generative pretraining + fine-tuning & 12 layers, $d=768$ & Transfer via pretraining \\
+GPT-2 & Larger decoder-only Transformer & Large-scale next-token prediction & Up to 1.5B params & Zero-shot behavior emerges \\
+GPT-3 & Much larger decoder-only Transformer & Massive next-token prediction & 175B params & Few-shot / in-context learning \\
 \bottomrule
 \end{tabular}
+\vspace{0.4em}
+
+\footnotesize References: Vaswani et al. (2017), Radford et al. (2018, 2019), Brown et al. (2020).
 \end{frame}
+
 
 \begin{frame}{The Main Structural Trend}
 \begin{block}{From the initial Transformer to GPT-3}
-\[
-\text{encoder--decoder Transformer}
-\quad\Longrightarrow\quad
-\text{decoder-only GPT family}
-\quad\Longrightarrow\quad
-\text{same basic skeleton, scaled aggressively.}
-\]
+\centering
+\begin{tikzpicture}[node distance=0.85cm]
+\node[box, fill=blue!6, minimum width=3.3cm] (a) {encoder--decoder\\Transformer};
+\node[box, fill=orange!9, right=of a, minimum width=3.3cm] (b) {decoder-only\\GPT family};
+\node[box, fill=green!8, right=of b, minimum width=3.4cm] (c) {same skeleton,\\scaled up};
+\draw[arrow] (a)--(b);
+\draw[arrow] (b)--(c);
+\end{tikzpicture}
 \end{block}
-\vspace{0.5em}
 \begin{itemize}
   \item The original Transformer introduced the attention-based architecture.
   \item GPT keeps only the causal decoder side.
-  \item microGPT strips that decoder-only architecture down to its conceptual essentials.
-  \item GPT-1, GPT-2, and GPT-3 mostly differ by \textbf{scale}, training data, and the behavioral consequences of scale.
+  \item microGPT strips that architecture down to its essentials.
+  \item GPT-1, GPT-2, and GPT-3 mostly differ by \textbf{scale}, training data, and behavior induced by scale.
 \end{itemize}
 \end{frame}
 
@@ -329,7 +341,7 @@ GPT-3~\cite{brown2020gpt3} & Much larger decoder-only Transformer & Massive next
 \section{References}
 
 \begin{frame}[allowframebreaks]{References}
-\footnotesize
+\tiny
 \begin{thebibliography}{99}
 
 \bibitem[Vaswani et al., 2017]{vaswani2017attention}
