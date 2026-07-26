@@ -1,3 +1,6 @@
+---
+type: Note
+---
 # LLM Architecture Evolution
 **From the Initial Transformer to microGPT, GPT-1, GPT-2, and GPT-3**
 
