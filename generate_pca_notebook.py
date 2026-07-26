@@ -1,0 +1,462 @@
+import json
+import os
+
+notebook_path = r"c:\Users\spada\Downloads\ilya_reading_package\PCA_Multivariate_Gaussian_Analysis.ipynb"
+
+cells = [
+    # Cell 1: Markdown - Title & Theoretical Overview
+    {
+        "cell_type": "markdown",
+        "metadata": {},
+        "source": [
+            "# Principal Component Analysis (PCA) of a Multivariate Gaussian Distribution\n",
+            "\n",
+            "This notebook provides a complete mathematical, statistical, and visual walkthrough of **Principal Component Analysis (PCA)** applied to a 2D multivariate Gaussian distribution, exactly recreating and extending the classic textbook example.\n",
+            "\n",
+            "## 1. Problem Specification & Geometry\n",
+            "\n",
+            "We consider a bivariate Gaussian distribution $X \\sim \\mathcal{N}(\\boldsymbol{\\mu}, \\boldsymbol{\\Sigma})$ defined as follows:\n",
+            "- **Mean vector**: $\\boldsymbol{\\mu} = [1.0, 3.0]^\\top$\n",
+            "- **Primary axis standard deviation**: $\\sigma_1 = 3.0$ along the direction $\\mathbf{v}_1 = (\\cos 30^\\circ, \\sin 30^\\circ)^\\top \\approx (0.866, 0.5)^\\top$\n",
+            "- **Secondary axis standard deviation**: $\\sigma_2 = 1.0$ along the orthogonal direction $\\mathbf{v}_2 = (-\\sin 30^\\circ, \\cos 30^\\circ)^\\top \\approx (-0.5, 0.866)^\\top$\n",
+            "\n",
+            "### Theoretical Covariance Matrix Calculation\n",
+            "Using the eigen-decomposition form $\\boldsymbol{\\Sigma} = \\mathbf{V} \\boldsymbol{\\Lambda} \\mathbf{V}^\\top$, where:\n",
+            "$$\\mathbf{V} = \\begin{bmatrix} \\cos 30^\\circ & -\\sin 30^\\circ \\\\ \\sin 30^\\circ & \\cos 30^\\circ \\end{bmatrix} = \\begin{bmatrix} \\frac{\\sqrt{3}}{2} & -\\frac{1}{2} \\\\ \\frac{1}{2} & \\frac{\\sqrt{3}}{2} \\end{bmatrix}$$\n",
+            "$$\\boldsymbol{\\Lambda} = \\begin{bmatrix} \\sigma_1^2 & 0 \\\\ 0 & \\sigma_2^2 \\end{bmatrix} = \\begin{bmatrix} 9 & 0 \\\\ 0 & 1 \\end{bmatrix}$$\n",
+            "\n",
+            "Multiplying these yields the true covariance matrix:\n",
+            "$$\\boldsymbol{\\Sigma} = \\begin{bmatrix} 7 & 2\\sqrt{3} \\\\ 2\\sqrt{3} & 3 \\end{bmatrix} \\approx \\begin{bmatrix} 7.0000 & 3.4641 \\\\ 3.4641 & 3.0000 \\end{bmatrix}$$\n",
+            "\n",
+            "All interactive visualizations in this notebook are created with **Plotly**."
+        ]
+    },
+
+    # Cell 2: Code - Imports & Setup
+    {
+        "cell_type": "code",
+        "execution_count": None,
+        "metadata": {},
+        "outputs": [],
+        "source": [
+            "import numpy as np\n",
+            "import pandas as pd\n",
+            "from sklearn.decomposition import PCA\n",
+            "import plotly.graph_objects as go\n",
+            "import plotly.express as px\n",
+            "from plotly.subplots import make_subplots\n",
+            "import plotly.io as pio\n",
+            "\n",
+            "# Set clean white template for Plotly figures\n",
+            "pio.templates.default = \"plotly_white\"\n",
+            "\n",
+            "# Fix random seed for reproducibility\n",
+            "np.random.seed(42)\n",
+            "print(\"Environment setup complete!\")"
+        ]
+    },
+
+    # Cell 3: Markdown - Data Generation
+    {
+        "cell_type": "markdown",
+        "metadata": {},
+        "source": [
+            "## 2. Synthetic Data Generation\n",
+            "\n",
+            "We construct the exact covariance matrix $\\boldsymbol{\\Sigma}$ using rotation matrix algebra and draw $N = 3,000$ samples from $\\mathcal{N}(\\boldsymbol{\\mu}, \\boldsymbol{\\Sigma})$."
+        ]
+    },
+
+    # Cell 4: Code - Data Generation & Statistical Verification
+    {
+        "cell_type": "code",
+        "execution_count": None,
+        "metadata": {},
+        "outputs": [],
+        "source": [
+            "# True distribution parameters\n",
+            "mean_true = np.array([1.0, 3.0])\n",
+            "sigma1_true = 3.0\n",
+            "sigma2_true = 1.0\n",
+            "theta_deg = 30.0\n",
+            "theta_rad = np.deg2rad(theta_deg)\n",
+            "\n",
+            "# Orthonormal basis vectors (eigenvectors)\n",
+            "v1_true = np.array([np.cos(theta_rad), np.sin(theta_rad)])   # [0.866025, 0.5]\n",
+            "v2_true = np.array([-np.sin(theta_rad), np.cos(theta_rad)])  # [-0.5, 0.866025]\n",
+            "V_true = np.column_stack([v1_true, v2_true])\n",
+            "Lambda_true = np.diag([sigma1_true**2, sigma2_true**2])      # diag(9, 1)\n",
+            "\n",
+            "# True Covariance matrix\n",
+            "cov_true = V_true @ Lambda_true @ V_true.T\n",
+            "\n",
+            "# Draw N samples from Multivariate Normal distribution\n",
+            "N_samples = 3000\n",
+            "X = np.random.multivariate_normal(mean_true, cov_true, size=N_samples)\n",
+            "\n",
+            "# Sample empirical statistics\n",
+            "mean_emp = np.mean(X, axis=0)\n",
+            "cov_emp = np.cov(X, rowvar=False)\n",
+            "\n",
+            "print(\"=== Theoretical Parameters ===\")\n",
+            "print(f\"Mean Vector: {mean_true}\")\n",
+            "print(f\"Principal Direction 1 (v1): {v1_true} | std: {sigma1_true} | var: {sigma1_true**2}\")\n",
+            "print(f\"Principal Direction 2 (v2): {v2_true} | std: {sigma2_true} | var: {sigma2_true**2}\")\n",
+            "print(f\"Theoretical Covariance Matrix:\\n{np.round(cov_true, 4)}\\n\")\n",
+            "\n",
+            "print(f\"=== Sample Empirical Estimates (N = {N_samples}) ===\")\n",
+            "print(f\"Empirical Mean: {np.round(mean_emp, 4)}\")\n",
+            "print(f\"Empirical Covariance Matrix:\\n{np.round(cov_emp, 4)}\")"
+        ]
+    },
+
+    # Cell 5: Markdown - First Principles PCA
+    {
+        "cell_type": "markdown",
+        "metadata": {},
+        "source": [
+            "## 3. PCA Calculation (First Principles vs. Scikit-Learn)\n",
+            "\n",
+            "Principal Component Analysis performs eigen-decomposition on the sample covariance matrix $\\mathbf{C}$:\n",
+            "\n",
+            "1. **Centering**: $\\mathbf{X}_c = \\mathbf{X} - \\boldsymbol{\\bar{x}}$\n",
+            "2. **Sample Covariance**: $\\mathbf{C} = \\frac{1}{N-1} \\mathbf{X}_c^\\top \\mathbf{X}_c$\n",
+            "3. **Eigen-Decomposition**: $\\mathbf{C} \\mathbf{v}_i = \\lambda_i \\mathbf{v}_i$\n",
+            "4. **Scaling Eigenvectors**: Scaled vectors $\\mathbf{u}_i = \\sqrt{\\lambda_i} \\mathbf{v}_i$ correspond to standard deviation lengths along each principal axis.\n",
+            "5. **Explained Variance Ratio**: $\\text{EVR}_i = \\frac{\\lambda_i}{\\sum_k \\lambda_k}$"
+        ]
+    },
+
+    # Cell 6: Code - First Principles & Sklearn Calculation
+    {
+        "cell_type": "code",
+        "execution_count": None,
+        "metadata": {},
+        "outputs": [],
+        "source": [
+            "# 1. Center the empirical data\n",
+            "X_centered = X - mean_emp\n",
+            "\n",
+            "# 2. Calculate sample covariance matrix\n",
+            "C_emp = (X_centered.T @ X_centered) / (N_samples - 1)\n",
+            "\n",
+            "# 3. Compute Eigenvalues and Eigenvectors\n",
+            "evals, evecs = np.linalg.eigh(C_emp)\n",
+            "\n",
+            "# 4. Sort in descending order of eigenvalues\n",
+            "sort_idx = np.argsort(evals)[::-1]\n",
+            "evals_sorted = evals[sort_idx]\n",
+            "evecs_sorted = evecs[:, sort_idx]\n",
+            "\n",
+            "# Compute standard deviations (sqrt of eigenvalues)\n",
+            "stds_emp = np.sqrt(evals_sorted)\n",
+            "evr_manual = evals_sorted / np.sum(evals_sorted)\n",
+            "\n",
+            "# 5. Scikit-Learn PCA Verification\n",
+            "pca = PCA(n_components=2)\n",
+            "X_pca_sklearn = pca.fit_transform(X)\n",
+            "\n",
+            "print(\"=== First-Principles PCA Results ===\")\n",
+            "print(f\"Eigenvalues (Variances): {np.round(evals_sorted, 4)}\")\n",
+            "print(f\"Standard Deviations (√λ): {np.round(stds_emp, 4)}\")\n",
+            "print(f\"PC1 Vector (v1): {np.round(evecs_sorted[:, 0], 4)}\")\n",
+            "print(f\"PC2 Vector (v2): {np.round(evecs_sorted[:, 1], 4)}\")\n",
+            "print(f\"Explained Variance Ratios: {np.round(evr_manual * 100, 2)}%\\n\")\n",
+            "\n",
+            "print(\"=== Scikit-Learn PCA Verification ===\")\n",
+            "print(f\"Explained Variance (pca.explained_variance_): {np.round(pca.explained_variance_, 4)}\")\n",
+            "print(f\"Explained Variance Ratio (pca.explained_variance_ratio_): {np.round(pca.explained_variance_ratio_ * 100, 2)}%\")\n",
+            "print(f\"Component Matrix (pca.components_):\\n{np.round(pca.components_, 4)}\")"
+        ]
+    },
+
+    # Cell 7: Markdown - Plot 1 Replicating the Image
+    {
+        "cell_type": "markdown",
+        "metadata": {},
+        "source": [
+            "## 4. Plot 1: Replicating the Classic PCA Figure\n",
+            "\n",
+            "Below we plot the original Gaussian sample points with semi-transparent markers. The **black vectors** represent the eigenvectors of the covariance matrix, scaled by $\\sqrt{\\lambda_i}$ (the standard deviation along each principal axis), and anchored with their tails at the mean $(1, 3)$."
+        ]
+    },
+
+    # Cell 8: Code - Plotly Figure 1 (Replicating Image)
+    {
+        "cell_type": "code",
+        "execution_count": None,
+        "metadata": {},
+        "outputs": [],
+        "source": [
+            "# Create Figure 1 matching the exact structure and range of the reference plot\n",
+            "fig1 = go.Figure()\n",
+            "\n",
+            "# 1. Scatter of sampled points\n",
+            "fig1.add_trace(go.Scatter(\n",
+            "    x=X[:, 0],\n",
+            "    y=X[:, 1],\n",
+            "    mode='markers',\n",
+            "    marker=dict(\n",
+            "        size=4,\n",
+            "        color='rgba(60, 60, 60, 0.22)',\n",
+            "        line=dict(width=0)\n",
+            "    ),\n",
+            "    name='Gaussian Data Points',\n",
+            "    hovertemplate='X: %{x:.2f}<br>Y: %{y:.2f}<extra></extra>'\n",
+            "))\n",
+            "\n",
+            "# Mean coordinates\n",
+            "m_x, m_y = mean_emp[0], mean_emp[1]\n",
+            "\n",
+            "# Vector endpoints: mean + sqrt(lambda_i) * v_i\n",
+            "pc1_vec_scaled = evecs_sorted[:, 0] * stds_emp[0]\n",
+            "pc1_end = mean_emp + pc1_vec_scaled\n",
+            "\n",
+            "pc2_vec_scaled = evecs_sorted[:, 1] * stds_emp[1]\n",
+            "pc2_end = mean_emp + pc2_vec_scaled\n",
+            "\n",
+            "# Add mean marker\n",
+            "fig1.add_trace(go.Scatter(\n",
+            "    x=[m_x],\n",
+            "    y=[m_y],\n",
+            "    mode='markers',\n",
+            "    marker=dict(size=7, color='black', symbol='circle'),\n",
+            "    name='Sample Mean'\n",
+            "))\n",
+            "\n",
+            "# Function to draw vector arrows using annotations\n",
+            "def add_vector(fig, start, end, label):\n",
+            "    fig.add_annotation(\n",
+            "        x=end[0],\n",
+            "        y=end[1],\n",
+            "        ax=start[0],\n",
+            "        ay=start[1],\n",
+            "        xref=\"x\",\n",
+            "        yref=\"y\",\n",
+            "        axref=\"x\",\n",
+            "        ayref=\"y\",\n",
+            "        showarrow=True,\n",
+            "        arrowhead=2,\n",
+            "        arrowsize=1.4,\n",
+            "        arrowwidth=3.5,\n",
+            "        arrowcolor='black'\n",
+            "    )\n",
+            "\n",
+            "add_vector(fig1, mean_emp, pc1_end, \"PC1 (√λ₁ ≈ 3.0)\")\n",
+            "add_vector(fig1, mean_emp, pc2_end, \"PC2 (√λ₂ ≈ 1.0)\")\n",
+            "\n",
+            "# Formatting axes to match [-8, 10] x [-6, 12] grid with 1:1 aspect ratio\n",
+            "fig1.update_layout(\n",
+            "    title=\"<b>PCA of Multivariate Gaussian Distribution</b><br><sup>Eigenvectors scaled by √λ (std dev) with tails anchored at mean (1, 3)</sup>\",\n",
+            "    xaxis=dict(\n",
+            "        title=\"X\",\n",
+            "        range=[-8, 10],\n",
+            "        dtick=2,\n",
+            "        showgrid=True,\n",
+            "        gridcolor='rgba(200, 200, 200, 0.7)',\n",
+            "        gridwidth=1,\n",
+            "        griddash='dash',\n",
+            "        zeroline=False\n",
+            "    ),\n",
+            "    yaxis=dict(\n",
+            "        title=\"Y\",\n",
+            "        range=[-6, 12],\n",
+            "        dtick=2,\n",
+            "        scaleanchor=\"x\",\n",
+            "        scaleratio=1,\n",
+            "        showgrid=True,\n",
+            "        gridcolor='rgba(200, 200, 200, 0.7)',\n",
+            "        gridwidth=1,\n",
+            "        griddash='dash',\n",
+            "        zeroline=False\n",
+            "    ),\n",
+            "    width=750,\n",
+            "    height=750,\n",
+            "    plot_bgcolor='white',\n",
+            "    paper_bgcolor='white'\n",
+            ")\n",
+            "\n",
+            "fig1.show()"
+        ]
+    },
+
+    # Cell 9: Markdown - Plot 2 Confidence Ellipses
+    {
+        "cell_type": "markdown",
+        "metadata": {},
+        "source": [
+            "## 5. Plot 2: Confidence Ellipses (1-σ, 2-σ, 3-σ Contours)\n",
+            "\n",
+            "The level sets of constant Mahalanobis distance $(X - \\boldsymbol{\\mu})^\\top \\boldsymbol{\\Sigma}^{-1} (X - \\boldsymbol{\\mu}) = c^2$ form ellipses oriented along the principal component axes. Below we plot the $1\\sigma$, $2\\sigma$, and $3\\sigma$ confidence contours."
+        ]
+    },
+
+    # Cell 10: Code - Plotly Figure 2 (Confidence Ellipses)
+    {
+        "cell_type": "code",
+        "execution_count": None,
+        "metadata": {},
+        "outputs": [],
+        "source": [
+            "fig2 = go.Figure()\n",
+            "\n",
+            "# Scatter points\n",
+            "fig2.add_trace(go.Scatter(\n",
+            "    x=X[:, 0], y=X[:, 1],\n",
+            "    mode='markers',\n",
+            "    marker=dict(size=3, color='rgba(120, 130, 140, 0.2)'),\n",
+            "    name='Data Points'\n",
+            "))\n",
+            "\n",
+            "# Parametric ellipse points\n",
+            "t = np.linspace(0, 2*np.pi, 250)\n",
+            "colors = ['#1f77b4', '#ff7f0e', '#2ca02c']\n",
+            "\n",
+            "for k, color in zip([1, 2, 3], colors):\n",
+            "    # Standard circle scaled by k * sigma_i\n",
+            "    circle = np.array([k * sigma1_true * np.cos(t), k * sigma2_true * np.sin(t)])\n",
+            "    # Rotate by eigenvector matrix V and shift by mean\n",
+            "    ellipse = (V_true @ circle).T + mean_true\n",
+            "    \n",
+            "    fig2.add_trace(go.Scatter(\n",
+            "        x=ellipse[:, 0],\n",
+            "        y=ellipse[:, 1],\n",
+            "        mode='lines',\n",
+            "        line=dict(color=color, width=2.5, dash='solid' if k==1 else 'dash'),\n",
+            "        name=f'{k}σ Ellipse ({k*sigma1_true:.1f} × {k*sigma2_true:.1f})'\n",
+            "    ))\n",
+            "\n",
+            "# Add PC vector arrows\n",
+            "add_vector(fig2, mean_emp, pc1_end, \"PC1\")\n",
+            "add_vector(fig2, mean_emp, pc2_end, \"PC2\")\n",
+            "\n",
+            "fig2.update_layout(\n",
+            "    title=\"<b>Multivariate Gaussian Distribution with 1σ, 2σ, and 3σ Confidence Ellipses</b>\",\n",
+            "    xaxis=dict(title=\"X\", range=[-8, 10], dtick=2, gridcolor='whitesmoke'),\n",
+            "    yaxis=dict(title=\"Y\", range=[-6, 12], dtick=2, scaleanchor=\"x\", scaleratio=1, gridcolor='whitesmoke'),\n",
+            "    width=750,\n",
+            "    height=750,\n",
+            "    plot_bgcolor='white'\n",
+            ")\n",
+            "\n",
+            "fig2.show()"
+        ]
+    },
+
+    # Cell 11: Markdown - Plot 3 Transformed Coordinates & Variance
+    {
+        "cell_type": "markdown",
+        "metadata": {},
+        "source": [
+            "## 6. Plot 3: Transformed Principal Component Space & Explained Variance\n",
+            "\n",
+            "Projecting the centered data onto the principal axes $\\mathbf{Z} = \\mathbf{X}_c \\mathbf{V}$ decorrelates the features. In this transformed coordinate system, the covariance matrix becomes strictly diagonal $\\text{diag}(\\lambda_1, \\lambda_2)$."
+        ]
+    },
+
+    # Cell 12: Code - Plotly Figure 3 Subplots
+    {
+        "cell_type": "code",
+        "execution_count": None,
+        "metadata": {},
+        "outputs": [],
+        "source": [
+            "# Compute PCA projection coordinates\n",
+            "X_pca_manual = X_centered @ evecs_sorted\n",
+            "\n",
+            "# Subplots layout\n",
+            "fig_sub = make_subplots(\n",
+            "    rows=1, cols=2,\n",
+            "    subplot_titles=(\"Projected Data in Transformed PCA Coordinates\", \"Explained Variance Ratio by Component\"),\n",
+            "    horizontal_spacing=0.15\n",
+            ")\n",
+            "\n",
+            "# Subplot 1: Transformed scatter plot\n",
+            "fig_sub.add_trace(\n",
+            "    go.Scatter(\n",
+            "        x=X_pca_manual[:, 0],\n",
+            "        y=X_pca_manual[:, 1],\n",
+            "        mode='markers',\n",
+            "        marker=dict(\n",
+            "            size=3,\n",
+            "            color=X_pca_manual[:, 0],\n",
+            "            colorscale='Viridis',\n",
+            "            opacity=0.35\n",
+            "        ),\n",
+            "        name='Transformed Samples'\n",
+            "    ),\n",
+            "    row=1, col=1\n",
+            ")\n",
+            "\n",
+            "# Subplot 2: Explained variance ratio bar chart\n",
+            "fig_sub.add_trace(\n",
+            "    go.Bar(\n",
+            "        x=['PC1 (30° Axis)', 'PC2 (120° Axis)'],\n",
+            "        y=evr_manual * 100,\n",
+            "        text=[f\"{val*100:.2f}%\" for val in evr_manual],\n",
+            "        textposition='auto',\n",
+            "        marker_color=['#1f77b4', '#aec7e8'],\n",
+            "        name='Explained Variance'\n",
+            "    ),\n",
+            "    row=1, col=2\n",
+            ")\n",
+            "\n",
+            "fig_sub.update_xaxes(title_text=\"PC1 (Std Dev ≈ 3.0)\", row=1, col=1)\n",
+            "fig_sub.update_yaxes(title_text=\"PC2 (Std Dev ≈ 1.0)\", scaleanchor=\"x\", scaleratio=1, row=1, col=1)\n",
+            "\n",
+            "fig_sub.update_xaxes(title_text=\"Principal Component\", row=1, col=2)\n",
+            "fig_sub.update_yaxes(title_text=\"Variance Explained (%)\", range=[0, 105], row=1, col=2)\n",
+            "\n",
+            "fig_sub.update_layout(\n",
+            "    title=\"<b>PCA Coordinate Transformation & Variance Contribution</b>\",\n",
+            "    width=1000,\n",
+            "    height=500,\n",
+            "    showlegend=False,\n",
+            "    plot_bgcolor='white'\n",
+            ")\n",
+            "\n",
+            "fig_sub.show()"
+        ]
+    },
+
+    # Cell 13: Markdown - Summary of Findings
+    {
+        "cell_type": "markdown",
+        "metadata": {},
+        "source": [
+            "## Summary of Findings\n",
+            "\n",
+            "### Data Analysis Key Findings\n",
+            "- **Direction of Maximum Variance (PC1)**: Aligned at $30^\\circ$ from the horizontal axis with vector $(0.866, 0.5)^\\top$. The empirical eigenvalue $\\lambda_1 \\approx 9.0$ matches the specified variance $\\sigma_1^2 = 3^2 = 9$.\n",
+            "- **Orthogonal Component (PC2)**: Aligned at $120^\\circ$ with vector $(-0.5, 0.866)^\\top$. The empirical eigenvalue $\\lambda_2 \\approx 1.0$ matches the specified variance $\\sigma_2^2 = 1^2 = 1$.\n",
+            "- **Variance Explained Ratio**: PC1 accounts for **90.0%** of the total variance ($\\frac{9}{9+1} = 0.9$), while PC2 accounts for the remaining **10.0%**.\n",
+            "- **Scale Verification**: The lengths of the principal component arrows anchored at the empirical mean $(1.00, 3.00)$ correspond exactly to $\\sqrt{\\lambda_1} = 3.0$ and $\\sqrt{\\lambda_2} = 1.0$.\n",
+            "\n",
+            "### Insights or Next Steps\n",
+            "- Dimensionality reduction from 2D to 1D along PC1 retains **90%** of total dataset variance while minimizing mean squared reconstruction error.\n",
+            "- The Mahalanobis confidence ellipses provide a coordinate-invariant boundary for anomaly detection and statistical hypothesis testing."
+        ]
+    }
+]
+
+notebook = {
+    "cells": cells,
+    "metadata": {
+        "kernelspec": {
+            "display_name": "Python 3",
+            "language": "python",
+            "name": "python3"
+        },
+        "language_info": {
+            "name": "python",
+            "version": "3.11"
+        }
+    },
+    "nbformat": 4,
+    "nbformat_minor": 2
+}
+
+with open(notebook_path, "w", encoding="utf-8") as f:
+    json.dump(notebook, f, indent=2)
+
+print(f"Successfully generated notebook at: {notebook_path}")
